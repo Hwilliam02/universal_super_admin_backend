@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Started | RouteGenius AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1A66FE;
+            --primary-dark: #0052cc;
+            --card-glass: rgba(255, 255, 255, 0.05);
+            --border-glass: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-light);
+            color: #1e293b;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ── Sidebar Branding ────────────────────── */
+        .sidebar {
+            width: 45%;
+            background: linear-gradient(135deg, #1A66FE 0%, #4338ca 100%);
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .sidebar-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 80px;
+        }
+
+        .brand-logo {
+            width: 48px;
+            height: auto;
+            filter: brightness(0) invert(1);
+        }
+
+        .brand-name {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-text h1 {
+            font-size: 56px;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-text p {
+            font-size: 20px;
+            color: #dbeafe;
+            max-width: 420px;
+            line-height: 1.5;
+            font-weight: 300;
+        }
+
+        .glass-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            border-radius: 32px;
+            padding: 32px;
+            margin-top: 60px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .benefit-item:last-child { margin-bottom: 0; }
+
+        .benefit-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        .benefit-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        /* ── Form Section ────────────────────────── */
+        .form-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background: white;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 460px;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-header {
+            margin-bottom: 40px;
+        }
+
+        .form-header h2 {
+            font-size: 36px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 12px;
+            letter-spacing: -0.03em;
+        }
+
+        .form-header p {
+            color: #64748b;
+            font-size: 18px;
+        }
+
+        .card-main {
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            box-shadow: none;
+            border: none;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #475569;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        .input-icon svg {
+            width: 18px;
+            height: 18px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            height: 44px;
+            padding: 0 16px 0 52px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            transition: all 0.2s ease;
+            color: #0f172a;
+        }
+        
+        input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(26, 102, 254, 0.1);
+        }
+
+        .availability-hint {
+            font-size: 12px;
+            margin-top: 8px;
+            font-weight: 600;
+            display: none;
+        }
+        .availability-hint.checking { color: #64748b; display: block; }
+        .availability-hint.available { color: #10b981; display: block; }
+        .availability-hint.taken { color: #ef4444; display: block; }
+
+        .btn-submit {
+            width: 100%;
+            height: 60px;
+            background: #1A66FE;
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0 24px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(26, 102, 254, 0.15);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-submit:not(:disabled):hover {
+            background: #1A66FE;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(26, 102, 254, 0.25);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #94a3b8;
+            box-shadow: none;
+        }
+
+        /* Success View */
+        .success-view {
+            display: none;
+            text-align: center;
+            animation: zoomIn 0.5s ease;
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; scale: 0.9; }
+            to { opacity: 1; scale: 1; }
+        }
+
+        .success-icon-large {
+            width: 100px;
+            height: 100px;
+            background: #ecfdf5;
+            color: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 32px;
+            font-size: 48px;
+            border: 4px solid white;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15);
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar { width: 40%; padding: 40px; }
+            .hero-text h1 { font-size: 44px; }
+        }
+
+        @media (max-width: 768px) {
+            .main-container { flex-direction: column; }
+            .sidebar { width: 100%; min-height: 400px; padding: 40px 20px; }
+            .form-section { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- ── Left Side: Brand Experience ─────────── -->
+        <aside class="sidebar">
+            <div class="sidebar-content">
+                <div class="brand-header">
+                    <img src="/logos/default_trial_logo.png" alt="Logo" class="brand-logo" style="width: 80px;">
+                    <span class="brand-name">RouteGenius AI</span>
+                </div>
+
+                <div class="hero-text">
+                    <h1>Smarter Logistics Start Here.</h1>
+                    <p>Stop guessing, start optimizing. Join 500+ fleets managing routes with precision.</p>
+                </div>
+
+                <div class="glass-card">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        </div>
+                        <span class="benefit-text">Setup in under 2 minutes</span>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <span class="benefit-text">No credit card required</span>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                        </div>
+                        <span class="benefit-text">14 days full feature access</span>
+                    </div>
+                </div>
+            </div>
+
+            <p style="color: #ffffff; font-size: 14px; font-weight: 500; position: relative; z-index: 1;">&copy; 2026 RouteGenius Global Inc.</p>
+        </aside>
+
+        <!-- ── Right Side: Interaction ─────────────── -->
+        <main class="form-section">
+            <div class="form-container" id="interaction-root">
+                
+                <!-- Initial Form State -->
+                <div id="form-view">
+                    <div class="form-header">
+                        <h2>Start Free Trial</h2>
+                        <p>Tell us a bit about your organization.</p>
+                    </div>
+
+                    <div class="card-main">
+                        <form id="signup-form">
+                            <div class="form-group">
+                                <label for="admin_name">Name</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="admin_name" placeholder="Enter your full name" required autocomplete="name">
+                                    <div class="input-icon">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="company_name">Company Name</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="company_name" placeholder="e.g. BlueDart Express" required>
+                                    <div class="input-icon">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                                    </div>
+                                </div>
+                                <div id="name-hint" class="availability-hint"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="companyEmail">Work Email</label>
+                                <div class="input-wrapper">
+                                    <input type="email" id="companyEmail" placeholder="you@company.com" required autocomplete="email">
+                                    <div class="input-icon">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-submit" id="submit-btn" disabled>
+                                Create My Account
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Success State -->
+                <div id="success-view" class="success-view">
+                    <div class="success-icon-large">✓</div>
+                    <h2 style="font-size: 32px; font-weight: 800; color: #0f172a; margin-bottom: 16px;">Verify Your Email</h2>
+                    <p style="color: #64748b; font-size: 18px; line-height: 1.6; max-width: 400px; margin: 0 auto 30px;">
+                        We've dispatched a secure activation link to <strong id="user-email" style="color: #0f172a;"></strong>. 
+                        Check your inbox to finalize your workspace setup.
+                    </p>
+                    <div style="background: #f1f5f9; padding: 20px; border-radius: 20px; font-size: 14px; font-weight: 600; color: #475569;">
+                        Hint: Check your spam folder if you don't see it in 2 minutes.
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ── Logic Implementation ──────────────────────
+
+        const CONFIG = {
+            API_URL: window.location.origin + '/server1/api/v1'
+        };
+
+        const elements = {
+            form: document.getElementById('signup-form'),
+            adminInput: document.getElementById('admin_name'),
+            companyInput: document.getElementById('company_name'),
+            emailInput: document.getElementById('companyEmail'),
+            nameHint: document.getElementById('name-hint'),
+            submitBtn: document.getElementById('submit-btn'),
+            formView: document.getElementById('form-view'),
+            successView: document.getElementById('success-view'),
+            userEmailLabel: document.getElementById('user-email')
+        };
+
+        let debounceTimer;
+        let isNameValid = false;
+
+        // Listeners
+        elements.companyInput.addEventListener('input', handleNameCheck);
+        elements.emailInput.addEventListener('input', validateForm);
+        elements.adminInput.addEventListener('input', validateForm);
+
+        function handleNameCheck() {
+            const name = elements.companyInput.value.trim();
+            isNameValid = false;
+            validateForm();
+
+            if (name.length < 3) {
+                elements.nameHint.style.display = 'none';
+                return;
+            }
+
+            clearTimeout(debounceTimer);
+            elements.nameHint.className = 'availability-hint checking';
+            elements.nameHint.innerText = 'Analyzing availability...';
+            elements.nameHint.style.display = 'block';
+
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`${CONFIG.API_URL}/public/check-name`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ company_name: name })
+                    });
+                    const data = await res.json();
+                    
+                    if (data.status && data.data.available) {
+                        elements.nameHint.className = 'availability-hint available';
+                        elements.nameHint.innerText = '✓ Great name! This one is available.';
+                        isNameValid = true;
+                    } else {
+                        elements.nameHint.className = 'availability-hint taken';
+                        elements.nameHint.innerText = '✕ This entity name is already registered.';
+                        isNameValid = false;
+                    }
+                } catch (err) {
+                    elements.nameHint.style.display = 'none';
+                }
+                validateForm();
+            }, 600);
+        }
+
+        function validateForm() {
+            const email = elements.emailInput.value.trim();
+            const isAdminValid = elements.adminInput.value.trim().length > 2;
+            const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            
+            elements.submitBtn.disabled = !isNameValid || !isAdminValid || !isEmailValid;
+        }
+
+        elements.form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const payload = {
+                admin_name: elements.adminInput.value.trim(),
+                company_name: elements.companyInput.value.trim(),
+                companyEmail: elements.emailInput.value.trim()
+            };
+
+            elements.submitBtn.disabled = true;
+            elements.submitBtn.innerHTML = 'Securing Workspace...';
+
+            try {
+                const response = await fetch(`${CONFIG.API_URL}/public/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+
+                if (data.status) {
+                    elements.userEmailLabel.innerText = payload.companyEmail;
+                    elements.formView.style.display = 'none';
+                    elements.successView.style.display = 'block';
+                } else {
+                    alert(data.message || 'Verification Error. Please check your data.');
+                    resetSubmitButton();
+                }
+            } catch (err) {
+                alert('Cloud connection lost. Check your network.');
+                resetSubmitButton();
+            }
+        });
+
+        function resetSubmitButton() {
+            elements.submitBtn.disabled = false;
+            elements.submitBtn.innerHTML = `
+                Create My Account
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            `;
+        }
+    </script>
+</body>
+</html>
