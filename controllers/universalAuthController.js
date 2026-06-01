@@ -222,18 +222,7 @@ const masterLogin = async (req, res) => {
     // Fetch visas
     const visas = await Visa.find({ global_user_id: user.global_user_id, status: 'Active' });
 
-    // Create Master Access Token (symmetric, just for the Master Portal frontend)
     const username = user.username || user.email;
-    const accessToken = jwt.sign(
-      {
-        global_user_id: user.global_user_id,
-        global_company_id: user.global_company_id,
-        email: user.email,
-        username
-      },
-      process.env.JWT_SECRET || 'master_secret',
-      { expiresIn: '15m' }
-    );
 
     // Generate Universal Refresh Token
     const refreshTokenString = crypto.randomBytes(40).toString('hex');
@@ -249,7 +238,6 @@ const masterLogin = async (req, res) => {
     });
 
     const responseBody = {
-      accessToken,
       refreshToken: refreshTokenString,
       user: {
         global_user_id: user.global_user_id,
@@ -264,6 +252,19 @@ const masterLogin = async (req, res) => {
       const appToken = await buildAppAccessToken({ user, product_id });
       responseBody.appAccessToken = appToken.accessToken;
       responseBody.product_name = appToken.product_name;
+    } else {
+      // Create Master Access Token (symmetric, just for the Master Portal frontend)
+      const accessToken = jwt.sign(
+        {
+          global_user_id: user.global_user_id,
+          global_company_id: user.global_company_id,
+          email: user.email,
+          username
+        },
+        process.env.JWT_SECRET || 'master_secret',
+        { expiresIn: '15m' }
+      );
+      responseBody.accessToken = accessToken;
     }
 
     res.json(responseBody);
