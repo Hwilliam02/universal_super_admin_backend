@@ -5,11 +5,8 @@ import UserCompanyMembership from '../models/UserCompanyMembership.js';
 import apiResponse from '../utils/apiResponse.js';
 import jwt from 'jsonwebtoken';
 import { promisify  } from 'util';
-import mysql from 'mysql2/promise';
-import pool from '../config/sql.js';
 
 import { sendTrialSignupEmail  } from '../templates/trialSignupEmail.js';
-import { generateUUIDv7  } from '../utils/utils.js';
 
 // ─────────────────────────────────────────────────────────────
 // Helper: Check if company name is already taken
@@ -166,7 +163,6 @@ const completeTrial = async (req, res) => {
 
   let createdCompany = null;
   let adminUser = null;
-  let tenantDbConnection = null;
   let dbName = null;
 
   try {
@@ -213,19 +209,6 @@ const completeTrial = async (req, res) => {
       return apiResponse(res, 400, false, "Company name is no longer available. Please start a new registration.");
     }
 
-    // ─────────────────────────────────────────────
-    // STEP A: CREATE TENANT MySQL DATABASE
-    // ─────────────────────────────────────────────
-    // Only allow alphanumeric characters and single underscores
-    const sanitizedName = company_name
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, "_")  // Replace any non-alphanumeric char with _
-      .replace(/_+/g, "_")         // Replace multiple underscores with a single one
-      .replace(/^_+|_+$/g, "");    // Trim underscores from start/end
-
-    dbName = `company_${sanitizedName}`;
-
-    await pool.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
 
     // ─────────────────────────────────────────────
     // STEP B: CREATE COMPANY IN MONGODB
@@ -301,49 +284,6 @@ const completeTrial = async (req, res) => {
     });
 
     // ─────────────────────────────────────────────
-    // STEP E: INSERT USERS INTO TENANT MYSQL DB
-    // ─────────────────────────────────────────────
-    // To maintain consistency, we insert a Super Admin first (ID 1)
-    // followed by the Company Admin (ID 2).
-    
-    tenantDbConnection = await mysql.createConnection({
-      host: process.env.MYSQL_HOST,
-      user: process.env.MYSQL_USER,
-      password: process.env.MYSQL_PASSWORD,
-      database: dbName,
-    });
-
-    await tenantDbConnection.beginTransaction();
-
-    // 1. Find the first available Super Admin from Master DB
-    const superAdminMembership = await UserCompanyMembership.findOne({
-      role: { $in: ["superadmin", ["superadmin"]] }
-    }).populate("user_id");
-
-    const sAdminEmail = superAdminMembership?.user_id?.email
-    const sAdminFirstName = superAdminMembership?.first_name || "Super";
-    const sAdminLastName = superAdminMembership?.last_name || "Admin";
-    const sAdminUserId = generateUUIDv7();
-
-    // 2. Insert Super Admin (will get ID 1)
-    await tenantDbConnection.execute(
-      `INSERT INTO users (user_id, first_name, last_name, email, is_deleted, is_active)
-       VALUES (?, ?, ?, ?, 0, 1)`,
-      [sAdminUserId, sAdminFirstName, sAdminLastName, sAdminEmail]
-    );
-
-    // 3. Insert Trial Admin (will get ID 2)
-    const adminUserId = generateUUIDv7();
-    await tenantDbConnection.execute(
-      `INSERT INTO users (user_id, first_name, last_name, email, is_deleted, is_active)
-       VALUES (?, ?, ?, ?, 0, 1)`,
-      [adminUserId, firstName, lastName, email]
-    );
-
-    await tenantDbConnection.commit();
-    await tenantDbConnection.end();
-
-    // ─────────────────────────────────────────────
     // STEP F: MARK TRIAL SIGNUP AS COMPLETED
     // ─────────────────────────────────────────────
     trialSignup.status = "completed";
@@ -361,16 +301,6 @@ const completeTrial = async (req, res) => {
   } catch (error) {
     console.error("🔥 Complete Trial Error:", error);
 
-    // ── Rollback on failure ──────────────────────
-    if (tenantDbConnection) {
-      try {
-        await tenantDbConnection.rollback();
-        await tenantDbConnection.end();
-      } catch (err) {
-        console.error("Failed to rollback MySQL:", err);
-      }
-    }
-
     if (adminUser) {
       try {
         await User.findByIdAndDelete(adminUser._id);
@@ -385,14 +315,6 @@ const completeTrial = async (req, res) => {
         await Company.findByIdAndDelete(createdCompany._id);
       } catch (err) {
         console.error("Failed to cleanup company:", err);
-      }
-    }
-
-    if (dbName) {
-      try {
-        await pool.query(`DROP DATABASE IF EXISTS \`${dbName}\`;`);
-      } catch (err) {
-        console.error("Failed to cleanup tenant DB:", err);
       }
     }
 

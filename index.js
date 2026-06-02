@@ -4,7 +4,6 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import dbConnect from './config/db.js';
-import pool from './config/sql.js';
 import routes from './routes/index.js';
 // import { getTenant  } from './utils/getTanent.js';
 import { mongoErrorHandler  } from './errors/mongoErrorHandler.js';
@@ -13,7 +12,6 @@ import './jobs/suspendInactiveUsers.js';
 import './jobs/logCleanUpJob.js';
 dotenv.config();
 dbConnect()
-pool
 const app = express();
 
 
